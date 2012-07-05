@@ -1,13 +1,13 @@
 package optimization
 
 import (
-	"net"
 	"bytes"
 	"code.google.com/p/goprotobuf/proto"
 	"errors"
 	"fmt"
-	"strings"
+	"net"
 	optinet "ponyo.epfl.ch/git/optimization/go/optimization/net"
+	"strings"
 )
 
 type State uint32
@@ -20,15 +20,15 @@ const (
 )
 
 type Client struct {
-	Comm net.Conn
+	Comm       net.Conn
 	Connection string
-	Host string
-	State State
+	Host       string
+	State      State
 
 	MessageTemplate proto.Message
 
 	OnMessage *Signal
-	OnState *Signal
+	OnState   *Signal
 }
 
 func NewClientConnection(comm net.Conn, msg proto.Message) *Client {
@@ -43,10 +43,10 @@ func NewClientConnection(comm net.Conn, msg proto.Message) *Client {
 }
 
 func NewClient(msg proto.Message) *Client {
-	return &Client {
-		State: Disconnected,
-		OnMessage: NewSyncSignal(func (proto.Message) {}),
-		OnState: NewSignal(func () {}),
+	return &Client{
+		State:           Disconnected,
+		OnMessage:       NewSyncSignal(func(proto.Message) {}),
+		OnState:         NewSignal(func() {}),
 		MessageTemplate: msg,
 	}
 }
@@ -91,10 +91,10 @@ func (c *Client) Connect(connection string, connected func(error)) {
 	c.setState(Connecting)
 
 	// Connect async in a go routine
-	go func () {
+	go func() {
 		comm, err := addr.Dial()
 
-		Events <- func () {
+		Events <- func() {
 			if comm != nil {
 				res, _ := net.LookupAddr(addr.Host)
 

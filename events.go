@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Event func ()
+type Event func()
 type EventQueue chan Event
 
 var Events EventQueue
@@ -16,14 +16,14 @@ func init() {
 func (e EventQueue) Loop() {
 	for {
 		select {
-			case event, _ := <- e:
-				event()
+		case event, _ := <-e:
+			event()
 		}
 	}
 }
 
 func (e EventQueue) Timeout(ms time.Duration, f Event) {
-	go func () {
+	go func() {
 		time.Sleep(ms * time.Millisecond)
 		e <- f
 	}()

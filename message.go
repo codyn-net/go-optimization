@@ -2,10 +2,10 @@ package optimization
 
 import (
 	"bytes"
-	"strconv"
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	task "optimization_messages_task"
+	"strconv"
 )
 
 var _ = fmt.Println
@@ -26,7 +26,7 @@ func EncodeMessage(msg proto.Message) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func NewCommunication(tp task.Communication_Type, ft func (*task.Communication)) *task.Communication {
+func NewCommunication(tp task.Communication_Type, ft func(*task.Communication)) *task.Communication {
 	ret := new(task.Communication)
 
 	ret.Type = &tp
@@ -35,7 +35,7 @@ func NewCommunication(tp task.Communication_Type, ft func (*task.Communication))
 	return ret
 }
 
-func ExtractMessages(data []byte, ret proto.Message, cb func ()) int {
+func ExtractMessages(data []byte, ret proto.Message, cb func()) int {
 	// Read until space
 	buf := bytes.NewBuffer(data)
 	n := 0
@@ -47,7 +47,7 @@ func ExtractMessages(data []byte, ret proto.Message, cb func ()) int {
 			break
 		}
 
-		val, err := strconv.ParseInt(num[:len(num) - 1], 10, 32)
+		val, err := strconv.ParseInt(num[:len(num)-1], 10, 32)
 
 		if err != nil {
 			break

@@ -1,21 +1,21 @@
 package optimization
 
 import (
-	"reflect"
-	"runtime"
 	"fmt"
 	"ponyo.epfl.ch/git/optimization/go/optimization/log"
+	"reflect"
+	"runtime"
 )
 
 type sigType struct {
-	Type reflect.Type
+	Type  reflect.Type
 	Value reflect.Value
 }
 
 type Signal struct {
 	signature reflect.Value
-	funcs []sigType
-	sync bool
+	funcs     []sigType
+	sync      bool
 }
 
 func newSignal(sync bool, sig interface{}) *Signal {
@@ -26,10 +26,10 @@ func newSignal(sync bool, sig interface{}) *Signal {
 		return nil
 	}
 
-	return &Signal {
+	return &Signal{
 		signature: v,
-		sync: sync,
-		funcs: make([]sigType, 0),
+		sync:      sync,
+		funcs:     make([]sigType, 0),
 	}
 }
 
@@ -59,11 +59,11 @@ func (s *Signal) Connect(f interface{}) {
 		_, fname, line, _ := runtime.Caller(1)
 
 		log.S("%s:%d: Could not connect `%v', incorrect number of arguments (%d but expected %d)",
-		      fname,
-		      line,
-		      t,
-		      t.NumIn(),
-		      st.NumIn())
+			fname,
+			line,
+			t,
+			t.NumIn(),
+			st.NumIn())
 
 		return
 	}
@@ -80,46 +80,46 @@ func (s *Signal) Connect(f interface{}) {
 			_, fname, line, _ := runtime.Caller(1)
 
 			log.S("%s:%d: Could not connect `%v', incorrect argument %d type: %v but expected %v",
-			      fname,
-			      line,
-			      t,
-			      i + 1,
-			      t.In(i).Kind(),
-			      st.In(i).Kind())
+				fname,
+				line,
+				t,
+				i+1,
+				t.In(i).Kind(),
+				st.In(i).Kind())
 
 			return
 		}
 	}
 
-	s.funcs = append(s.funcs, sigType {
-		Type: t,
+	s.funcs = append(s.funcs, sigType{
+		Type:  t,
 		Value: v,
 	})
 }
 
-func (s *Signal) Emit(args... interface{}) {
+func (s *Signal) Emit(args ...interface{}) {
 	s.emit(s.sync, args...)
 }
 
-func (s *Signal) EmitSync(args... interface{}) {
+func (s *Signal) EmitSync(args ...interface{}) {
 	s.emit(true, args...)
 }
 
-func (s *Signal) EmitAsync(args... interface{}) {
+func (s *Signal) EmitAsync(args ...interface{}) {
 	s.emit(false, args...)
 }
 
-func (s *Signal) emit(sync bool, args... interface{}) {
+func (s *Signal) emit(sync bool, args ...interface{}) {
 	ot := s.signature.Type()
 
 	if ot.NumIn() != len(args) {
 		_, fname, line, _ := runtime.Caller(2)
 
 		log.S("%s:%d: Could not emit signal, incorrect number of arguments (%d but expected %d)",
-		      fname,
-		      line,
-		      len(args),
-		      ot.NumIn())
+			fname,
+			line,
+			len(args),
+			ot.NumIn())
 
 		return
 	}
@@ -135,7 +135,7 @@ func (s *Signal) emit(sync bool, args... interface{}) {
 		}
 	}
 
-	f := func () {
+	f := func() {
 		for _, r := range s.funcs {
 			rval := r.Value.Call(vals)
 

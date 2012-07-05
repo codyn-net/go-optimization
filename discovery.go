@@ -1,34 +1,34 @@
 package optimization
 
 import (
-	"net"
-	"strconv"
 	"fmt"
+	"net"
 	discovery "optimization_messages_discovery"
 	"ponyo.epfl.ch/git/optimization/go/optimization/log"
+	"strconv"
 )
 
 var _ = fmt.Println
 
 type Discovered struct {
 	Connection string
-	Host string
+	Host       string
 }
 
 type Greeting struct {
 	Connection string
-	Host string
+	Host       string
 }
 
 type Discovery struct {
 	conn *net.UDPConn
 
 	Namespace string
-	Host string
-	Port uint
+	Host      string
+	Port      uint
 
-	Wakeup []func (disc *Discovered)
-	Greeting []func (disc *Discovered)
+	Wakeup   []func(disc *Discovered)
+	Greeting []func(disc *Discovered)
 }
 
 func (d *Discovery) read() {
@@ -43,51 +43,51 @@ func (d *Discovery) read() {
 
 		msg := new(discovery.Discovery)
 
-		ExtractMessages(buf[0:n], msg, func () {
+		ExtractMessages(buf[0:n], msg, func() {
 			if msg.GetNamespace() != d.Namespace {
-				log.Message(log.Discovery | log.Verbose,
-				            "Discovery does not match namespace (%s but need %s)",
-				            msg.GetNamespace(), d.Namespace)
+				log.Message(log.Discovery|log.Verbose,
+					"Discovery does not match namespace (%s but need %s)",
+					msg.GetNamespace(), d.Namespace)
 				return
 			}
 
-			disc := &Discovered {
+			disc := &Discovered{
 				Connection: msg.GetGreeting().GetConnection(),
-				Host: addr.IP.String(),
+				Host:       addr.IP.String(),
 			}
 
-			switch (msg.GetType()) {
-				case discovery.Discovery_TypeGreeting:
-					log.D("Received greeting from %s", disc.Host)
+			switch msg.GetType() {
+			case discovery.Discovery_TypeGreeting:
+				log.D("Received greeting from %s", disc.Host)
 
-					Events <- func () {
-						for _, g := range d.Greeting {
-							g(disc)
-						}
+				Events <- func() {
+					for _, g := range d.Greeting {
+						g(disc)
 					}
+				}
 
-				case discovery.Discovery_TypeWakeup:
-					log.D("Received wakeup from %s", disc.Host)
+			case discovery.Discovery_TypeWakeup:
+				log.D("Received wakeup from %s", disc.Host)
 
-					Events <- func () {
-						for _, w := range d.Wakeup {
-							w(disc)
-						}
+				Events <- func() {
+					for _, w := range d.Wakeup {
+						w(disc)
 					}
+				}
 			}
 		})
 	}
 }
 
 func NewDiscovery(host string, port uint, namespace string) (*Discovery, error) {
-	ret := &Discovery {
-		Host: host,
-		Port: port,
+	ret := &Discovery{
+		Host:      host,
+		Port:      port,
 		Namespace: namespace,
 	}
 
-	ret.Wakeup = []func (disc *Discovered) {}
-	ret.Greeting = []func (disc *Discovered) {}
+	ret.Wakeup = []func(disc *Discovered){}
+	ret.Greeting = []func(disc *Discovered){}
 
 	host = host + ":" + strconv.FormatUint(uint64(port), 10)
 
