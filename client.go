@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	optinet "ponyo.epfl.ch/git/optimization/go/optimization/net"
+	optinet "ponyo.epfl.ch/go/get/optimization/go/optimization/net"
 	"strings"
 )
 

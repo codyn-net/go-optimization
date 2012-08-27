@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	discovery "optimization_messages_discovery"
-	"ponyo.epfl.ch/git/optimization/go/optimization/log"
+	"ponyo.epfl.ch/go/get/optimization/go/optimization/log"
 	"strconv"
 )
 
