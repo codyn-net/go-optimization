@@ -25,13 +25,21 @@ func (a *Address) Dial() (net.Conn, error) {
 	return net.Dial(a.Protocol, ads)
 }
 
+func (a *Address) String() string {
+	return fmt.Sprintf("%v://%v:%v", a.Protocol, a.Host, a.Port)
+}
+
 func ParseAddress(constr string) *Address {
+	return ParseAddressWithDefaultProtocol(constr, "tcp");
+}
+
+func ParseAddressWithDefaultProtocol(constr string, defaultProtocol string) *Address {
 	ret := new(Address)
 
 	idx := strings.Index(constr, "://")
 
 	if idx == -1 {
-		ret.Protocol = "tcp"
+		ret.Protocol = defaultProtocol
 	} else {
 		ret.Protocol = constr[0:idx]
 		constr = constr[idx + 3:]
