@@ -3,7 +3,7 @@ package optimization
 import (
 	"fmt"
 	"net"
-	discovery "optimization_messages_discovery"
+	discovery "optimization/messages/discovery.pb"
 	"ponyo.epfl.ch/go/get/optimization/go/optimization/log"
 	"strconv"
 )

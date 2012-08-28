@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
-	task "optimization_messages_task"
+	task "optimization/messages/task.pb"
 	"strconv"
 )
 
