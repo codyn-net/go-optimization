@@ -1,12 +1,12 @@
 PKGCONFIG = $(shell which pkg-config)
 
-ifeq ($(PKGCONFIG),"")
+ifeq ($(PKGCONFIG),)
 $(error Please install pkg-config...)
 endif
 
-PROTODIR = $(shell $(PKGCONFIG) --variable=protodir liboptimization-2.0 &>/dev/null)
+PROTODIR = $(shell $(PKGCONFIG) --variable=protodir liboptimization-2.0 2>/dev/null)
 
-ifeq ($(PROTODIR),"")
+ifeq ($(PROTODIR),)
 $(error Could not find liboptimization-2.0 development files...)
 endif
 
