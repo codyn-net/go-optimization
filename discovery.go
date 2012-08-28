@@ -103,18 +103,49 @@ func NewDiscovery(host string, port uint, namespace string) (*Discovery, error) 
 	return ret, nil
 }
 
-func (d *Discovery) SendWakeup() {
+func (d *Discovery) connect() *net.UDPConn {
 	s := fmt.Sprintf("%v:%v", d.Host, d.Port)
 
 	addr, err := net.ResolveUDPAddr("udp", s)
 
 	if err != nil {
-		return
+		return nil
 	}
 
 	conn, err := net.DialUDP("udp", nil, addr)
 
 	if err != nil {
+		return nil
+	}
+
+	return conn
+}
+
+func (d *Discovery) SendGreeting(connection string) {
+	conn := d.connect()
+
+	if conn == nil {
+		return
+	}
+
+	cl := NewClientConnection(conn, new(discovery.Discovery))
+
+	disc := new(discovery.Discovery)
+	tp := discovery.Discovery_TypeGreeting
+
+	disc.Type = &tp
+	disc.Namespace = &d.Namespace
+
+	disc.Greeting = new(discovery.Greeting)
+	disc.Greeting.Connection = &connection
+
+	cl.Send(disc)
+}
+
+func (d *Discovery) SendWakeup() {
+	conn := d.connect()
+
+	if conn == nil {
 		return
 	}
 
@@ -128,7 +159,7 @@ func (d *Discovery) SendWakeup() {
 
 	disc.Wakeup = new(discovery.Wakeup)
 
-	wad := "multicast://" + s
+	wad := fmt.Sprintf("multicast://%v:%v", d.Host, d.Port)
 	disc.Wakeup.Connection = &wad
 
 	cl.Send(disc)
