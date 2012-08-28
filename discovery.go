@@ -15,11 +15,6 @@ type Discovered struct {
 	Host       string
 }
 
-type Greeting struct {
-	Connection string
-	Host       string
-}
-
 type Discovery struct {
 	conn *net.UDPConn
 
