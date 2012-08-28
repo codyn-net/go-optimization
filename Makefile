@@ -19,7 +19,8 @@ GOFILES = $(PROTOFILES:.proto=.pb.go)
 BUILTFILES = $(foreach i,$(GOFILES),$(BASE)/$(i:.pb.go=.pb)/$(i))
 
 all:
-	@echo "Use make install to generate and install the proto files. The files will be installed in $(BASE)."
+	@echo "Use make install to generate and install the proto files. The generated files will be installed in $(BASE)."; \
+	echo "Found proto files: $(sort $(PROTOFILES))"
 
 install: $(BUILTFILES)
 
