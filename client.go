@@ -1,7 +1,6 @@
 package optimization
 
 import (
-	"bytes"
 	"code.google.com/p/goprotobuf/proto"
 	"errors"
 	"fmt"
@@ -135,9 +134,6 @@ func (c *Client) Send(msg proto.Message) {
 }
 
 func (c *Client) readLoop() {
-	buf := new(bytes.Buffer)
-	data := make([]byte, 512)
-
 	if len(c.Host) == 0 {
 		hname := c.Comm.RemoteAddr().String()
 		pos := strings.Index(hname, ":")
@@ -153,28 +149,15 @@ func (c *Client) readLoop() {
 		}
 	}
 
-	for {
-		n, err := c.Comm.Read(data)
-
+	ReadMessages(c.Comm, c.MessageTemplate, func (msg interface{}, err error) bool {
 		if err != nil {
 			Events <- func() {
 				c.setState(Disconnected)
 			}
-
-			break
+		} else {
+			c.OnMessage.Emit(msg)
 		}
 
-		// append to the buffer
-		buf.Write(data[:n])
-
-		b := buf.Bytes()
-
-		n = ExtractMessages(b, c.MessageTemplate, func() {
-			c.OnMessage.Emit(proto.Clone(c.MessageTemplate))
-		})
-
-		if n > 0 {
-			buf = bytes.NewBuffer(b[n:])
-		}
-	}
+		return true
+	})
 }

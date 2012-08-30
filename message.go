@@ -6,6 +6,7 @@ import (
 	"fmt"
 	task "optimization/messages/task.pb"
 	"strconv"
+	"io"
 )
 
 var _ = fmt.Println
@@ -76,4 +77,41 @@ func ExtractMessages(data []byte, ret proto.Message, cb func()) int {
 	}
 
 	return n
+}
+
+func ReadMessages(reader io.Reader, ret proto.Message, cb func(interface{}, error) bool) {
+	buf := new(bytes.Buffer)
+	data := make([]byte, 512)
+
+	for {
+		n, err := reader.Read(data)
+
+		// append to the buffer
+		buf.Write(data[:n])
+
+		b := buf.Bytes()
+		var cont bool
+		cont = true
+
+		n = ExtractMessages(b, ret, func() {
+			cnt := cb(proto.Clone(ret), nil)
+
+			if !cnt {
+				cont = false
+			}
+		})
+
+		if n > 0 {
+			buf = bytes.NewBuffer(b[n:])
+		}
+
+		if err != nil {
+			cb(nil, err)
+			break
+		}
+
+		if !cont {
+			break
+		}
+	}
 }
