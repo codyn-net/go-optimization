@@ -5,7 +5,6 @@ import (
 	"net"
 	discovery "optimization/messages/discovery.pb"
 	"ponyo.epfl.ch/go/get/optimization/go/optimization/log"
-	"strconv"
 )
 
 var _ = fmt.Println
@@ -19,8 +18,7 @@ type Discovery struct {
 	conn *net.UDPConn
 
 	Namespace string
-	Host      string
-	Port      uint
+	Address   string
 
 	Wakeup   []func(disc *Discovered)
 	Greeting []func(disc *Discovered)
@@ -47,13 +45,16 @@ func (d *Discovery) read() {
 			}
 
 			disc := &Discovered{
-				Connection: msg.GetGreeting().GetConnection(),
 				Host:       addr.IP.String(),
 			}
 
 			switch msg.GetType() {
 			case discovery.Discovery_TypeGreeting:
-				log.D("Received greeting from %s", disc.Host)
+				disc.Connection = msg.GetGreeting().GetConnection()
+
+				log.D("Received greeting from %s (connection: %s)",
+				      disc.Host,
+				      disc.Connection)
 
 				Events <- func() {
 					for _, g := range d.Greeting {
@@ -62,7 +63,11 @@ func (d *Discovery) read() {
 				}
 
 			case discovery.Discovery_TypeWakeup:
-				log.D("Received wakeup from %s", disc.Host)
+				disc.Connection = msg.GetWakeup().GetConnection()
+
+				log.D("Received wakeup from %s (connection: %s)",
+				      disc.Host,
+				      disc.Connection)
 
 				Events <- func() {
 					for _, w := range d.Wakeup {
@@ -74,24 +79,17 @@ func (d *Discovery) read() {
 	}
 }
 
-func NewDiscovery(host string, port uint, namespace string) (*Discovery, error) {
+func NewDiscovery(address string, namespace string) (*Discovery, error) {
 	ret := &Discovery{
-		Host:      host,
-		Port:      port,
 		Namespace: namespace,
 	}
 
 	ret.Wakeup = []func(disc *Discovered){}
 	ret.Greeting = []func(disc *Discovered){}
 
-	host = host + ":" + strconv.FormatUint(uint64(port), 10)
+	addr, err := net.ResolveUDPAddr("udp", address)
 
-	addr, err := net.ResolveUDPAddr("udp", host)
-
-	if err != nil {
-		return nil, err
-	}
-
+	ret.Address = address
 	ret.conn, err = net.ListenMulticastUDP("udp", nil, addr)
 
 	if err != nil {
@@ -104,9 +102,7 @@ func NewDiscovery(host string, port uint, namespace string) (*Discovery, error) 
 }
 
 func (d *Discovery) connect() *net.UDPConn {
-	s := fmt.Sprintf("%v:%v", d.Host, d.Port)
-
-	addr, err := net.ResolveUDPAddr("udp", s)
+	addr, err := net.ResolveUDPAddr("udp", d.Address)
 
 	if err != nil {
 		return nil
@@ -159,8 +155,7 @@ func (d *Discovery) SendWakeup() {
 
 	disc.Wakeup = new(discovery.Wakeup)
 
-	wad := fmt.Sprintf("multicast://%v:%v", d.Host, d.Port)
-	disc.Wakeup.Connection = &wad
+	disc.Wakeup.Connection = &d.Address
 
 	cl.Send(disc)
 }
