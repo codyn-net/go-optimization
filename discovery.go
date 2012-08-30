@@ -45,7 +45,7 @@ func (d *Discovery) read() {
 			}
 
 			disc := &Discovered{
-				Host:       addr.IP.String(),
+				Host: addr.IP.String(),
 			}
 
 			switch msg.GetType() {
@@ -53,8 +53,8 @@ func (d *Discovery) read() {
 				disc.Connection = msg.GetGreeting().GetConnection()
 
 				log.D("Received greeting from %s (connection: %s)",
-				      disc.Host,
-				      disc.Connection)
+					disc.Host,
+					disc.Connection)
 
 				Events <- func() {
 					for _, g := range d.Greeting {
@@ -66,8 +66,8 @@ func (d *Discovery) read() {
 				disc.Connection = msg.GetWakeup().GetConnection()
 
 				log.D("Received wakeup from %s (connection: %s)",
-				      disc.Host,
-				      disc.Connection)
+					disc.Host,
+					disc.Connection)
 
 				Events <- func() {
 					for _, w := range d.Wakeup {

@@ -1,10 +1,9 @@
 package log
 
 import (
-	//"log"
+	"fmt"
 	"os"
 	"strings"
-	"fmt"
 	"time"
 )
 
@@ -21,59 +20,58 @@ const (
 
 var flags Flags
 
-var names = map[Flags]string {
+var names = map[Flags]string{
 	Discovery: "discovery",
-	Master: "master",
-	Worker: "worker",
-	Signal: "signal",
-	Command: "command",
-	Verbose: "verbose",
+	Master:    "master",
+	Worker:    "worker",
+	Signal:    "signal",
+	Command:   "command",
+	Verbose:   "verbose",
 }
 
 func init() {
 	for k, v := range names {
 		uname := strings.ToUpper(v)
 
-		if len(os.Getenv("DEBUG_" + uname)) > 0 {
+		if len(os.Getenv("DEBUG_"+uname)) > 0 {
 			flags |= k
 		}
 	}
 }
 
-func C(format string, v... interface{}) {
+func C(format string, v ...interface{}) {
 	Message(Command, format, v...)
 }
 
-
-func S(format string, v... interface{}) {
+func S(format string, v ...interface{}) {
 	Message(Signal, format, v...)
 }
 
-func D(format string, v... interface{}) {
+func D(format string, v ...interface{}) {
 	Message(Discovery, format, v...)
 }
 
-func W(format string, v... interface{}) {
+func W(format string, v ...interface{}) {
 	Message(Worker, format, v...)
 }
 
-func M(format string, v... interface{}) {
+func M(format string, v ...interface{}) {
 	Message(Master, format, v...)
 }
 
-func E(format string, v... interface{}) {
+func E(format string, v ...interface{}) {
 	Message(0, format, v...)
 }
 
-func Message(f Flags, format string, v... interface{}) {
-	if f != 0 && f & flags == 0 {
+func Message(f Flags, format string, v ...interface{}) {
+	if f != 0 && f&flags == 0 {
 		return
 	}
 
 	nms := make([]string, 0)
 
 	for k, v := range names {
-		if k & f != 0 {
+		if k&f != 0 {
 			nms = append(nms, v)
 		}
 	}

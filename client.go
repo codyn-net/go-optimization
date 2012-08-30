@@ -149,7 +149,7 @@ func (c *Client) readLoop() {
 		}
 	}
 
-	ReadMessages(c.Comm, c.MessageTemplate, func (msg interface{}, err error) bool {
+	ReadMessages(c.Comm, c.MessageTemplate, func(msg interface{}, err error) bool {
 		if err != nil {
 			Events <- func() {
 				c.setState(Disconnected)

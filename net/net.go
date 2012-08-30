@@ -1,16 +1,16 @@
 package net
 
 import (
-	"strings"
-	"net"
 	"fmt"
+	"net"
 	"os"
+	"strings"
 )
 
 type Address struct {
 	Protocol string
-	Host string
-	Port string
+	Host     string
+	Port     string
 }
 
 func (a *Address) Dial() (net.Conn, error) {
@@ -121,7 +121,7 @@ func (a *Address) String() string {
 }
 
 func ParseAddress(constr string) *Address {
-	return ParseAddressWithDefaultProtocol(constr, "tcp");
+	return ParseAddressWithDefaultProtocol(constr, "tcp")
 }
 
 func ParseAddressWithDefaultProtocol(constr string, defaultProtocol string) *Address {
@@ -133,7 +133,7 @@ func ParseAddressWithDefaultProtocol(constr string, defaultProtocol string) *Add
 		ret.Protocol = defaultProtocol
 	} else {
 		ret.Protocol = constr[0:idx]
-		constr = constr[idx + 3:]
+		constr = constr[idx+3:]
 	}
 
 	ret.Host, ret.Port, _ = net.SplitHostPort(constr)

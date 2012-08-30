@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
+	"io"
 	task "optimization/messages/task.pb"
 	"strconv"
-	"io"
 )
 
 var _ = fmt.Println
