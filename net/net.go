@@ -44,7 +44,18 @@ func (a *Address) Listen() (net.Listener, error) {
 		ads = a.Host
 	}
 
-	return net.Listen(a.underlyingProtocol(), ads)
+	listener, err := net.Listen(a.underlyingProtocol(), ads)
+
+	if a.Port == "0" {
+		// check real assigned port here if needed!
+
+		if tcp, ok := listener.Addr().(*net.TCPAddr); ok {
+			a.Port = fmt.Sprintf("%v", tcp.Port)
+		}
+	}
+
+
+	return listener, err
 }
 
 func (a *Address) IPAddr() (*net.IPAddr, error) {
