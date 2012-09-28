@@ -145,7 +145,7 @@ func (s *Signal) emit(sync bool, args ...interface{}) {
 		}
 	}
 
-	if sync {
+	if !sync {
 		Events <- f
 	} else {
 		f()
