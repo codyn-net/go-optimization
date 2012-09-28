@@ -10,7 +10,7 @@ type EventQueue chan Event
 var Events EventQueue
 
 func init() {
-	Events = make(EventQueue)
+	Events = make(EventQueue, 1024)
 }
 
 func (e EventQueue) Loop() {
