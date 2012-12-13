@@ -131,6 +131,13 @@ func (s *Signal) emit(sync bool, args ...interface{}) {
 		vals[i] = reflect.ValueOf(v)
 
 		if !vals[i].Type().AssignableTo(ot.In(i)) {
+			_, fname, line, _ := runtime.Caller(2)
+
+			log.S("%s:%d: Could not emit signal, can't assign %v to %v",
+			      fname,
+			      line,
+			      vals[i].Type(),
+			      ot.In(i))
 			return
 		}
 	}
