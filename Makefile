@@ -1,59 +1,48 @@
-PROTODIR ?= __noproto
+#PROTO = $(wildcard $(PROTODIR)/optimization/messages/*.proto)
 
-ifeq ($(PROTODIR),__noproto)
+#PROTOFILES = $(foreach i,$(PROTO),$(notdir $(i)))
+#GOFILES = $(PROTOFILES:.proto=.pb.go)
 
-PKGCONFIG = $(shell which pkg-config)
+#BUILTFILES = $(foreach i,$(GOFILES),messages/$(i:.pb.go=.pb)/$(i))
 
-ifeq ($(PKGCONFIG),)
-$(error Please install pkg-config (or specify PROTODIR manually))
-endif
+# All the messages
+PROTO_MESSAGES = task command discovery monitor
 
-PROTODIR = $(shell $(PKGCONFIG) --variable=protodir liboptimization-2.0 2>/dev/null)
+# The temporary directory to fetch the proto files in
+FETCH_DIR = .fetch-proto
 
-ifeq ($(PROTODIR),)
-$(error Please install the liboptimization-2.0 development files or set PROTODIR)
-endif
+# The fetched .proto files for each message
+PROTO_FILES = $(foreach i,$(PROTO_MESSAGES),$(FETCH_DIR)/optimization/messages/$(i).proto)
 
-NOFETCH = 1
+# The go version of the proto files in messages/
+PROTO_GO_FILES = $(foreach i,$(PROTO_MESSAGES),messages/$(i).pb/$(i).pb.go)
 
-endif
-
-PROTO = $(wildcard $(PROTODIR)/optimization/messages/*.proto)
-BASE = $(GOPATH)/src/optimization/messages
-
-PROTOFILES = $(foreach i,$(PROTO),$(notdir $(i)))
-GOFILES = $(PROTOFILES:.proto=.pb.go)
-
-BUILTFILES = $(foreach i,$(GOFILES),$(BASE)/$(i:.pb.go=.pb)/$(i))
+# The url where to fetch the proto files from
+FETCH_BASE = https://ponyo.epfl.ch/cgit/index.cgi/optimization/liboptimization.git/plain/optimization/messages
 
 all:
-	@echo "Use 'make install' to generate and install the proto files. The generated files will be installed in $(BASE)."; \
-	echo "Found proto files: $(sort $(PROTOFILES))"
+	@echo "Use the update-proto target to update the go protobuf files."
 
-FETCH_BASE = https://ponyo.epfl.ch/cgit/index.cgi/optimization/liboptimization.git/plain/
+$(PROTO_FILES):
+	@mkdir -p $(dir $@) || exit 1;				\
+	echo "Fetching $@";					\
+	curl -s -o "$@" "$(FETCH_BASE)/$(notdir $@)";
 
-fetch-proto:
-	@if ! test -z "$(NOFETCH)"; then					\
-		echo "Can't fetch in the system protodir, use make fetch-proto PROTODIR=";	\
-		exit 1;								\
-	fi;									\
-	mkdir -p "$(PROTODIR)/optimization/messages" || exit 1;			\
-	for i in task command discovery monitor; do 				\
-		echo "Fetching $$i.proto to $(PROTODIR)/optimization/messages";	\
-		curl -s -o "$(PROTODIR)/optimization/messages/$$i.proto"	\
-		        "$(FETCH_BASE)/optimization/messages/$$i.proto";	\
+update-proto: $(PROTO_GO_FILES)
+	@rm -rf $(FETCH_DIR);							\
+	for i in $(PROTO_MESSAGES); do						\
+		echo "[FIX] $$i.pb.go";						\
+		go run fixproto/fixproto.go '' messages/$$i.pb/$$i.pb.go;	\
 	done
 
-install: $(BUILTFILES)
+clean-proto:
+	@rm -rf messages/* $(FETCH_DIR)
 
-uninstall:
-		rm -f $(BUILTSOURCES)
-
-$(BUILTFILES): $(BASE)/%.pb.go:
+$(PROTO_GO_FILES): $(PROTO_FILES)
 	@echo "[GEN] $(notdir $@)"; \
 	pname=$(basename $(basename $(notdir $@)));				\
-	protoc --go_out=$(GOPATH)/src -I$(PROTODIR) $(PROTODIR)/optimization/messages/$$pname.proto; \
-	mkdir -p $(GOPATH)/src/optimization/messages/$$pname.pb;		\
-	mv $(GOPATH)/src/optimization/messages/$$pname.pb.go $(GOPATH)/src/optimization/messages/$$pname.pb/
+	protoc --go_out=$(FETCH_DIR) -I$(FETCH_DIR) $(FETCH_DIR)/optimization/messages/$$pname.proto; \
+	mkdir -p messages/$$pname.pb;			\
+	mv $(FETCH_DIR)/optimization/messages/$$pname.pb.go messages/$$pname.pb/
 
-.PHONY : all install uninstall fetch-proto
+.PHONY : fetch-proto clean-proto update-proto all

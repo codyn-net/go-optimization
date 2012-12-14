@@ -5,7 +5,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io"
-	task "optimization/messages/task.pb"
+	"ponyo.epfl.ch/go/get/optimization/go/optimization/messages/task.pb"
 	"strconv"
 )
 
