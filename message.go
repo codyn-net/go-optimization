@@ -98,6 +98,8 @@ func ExtractMessages(data []byte, ret proto.Message, cb func()) int {
 	n := 0
 
 	for {
+		var err error
+
 		num, err := buf.ReadString(' ')
 
 		if err != nil {
@@ -117,7 +119,7 @@ func ExtractMessages(data []byte, ret proto.Message, cb func()) int {
 		msg := make([]byte, val)
 		nn, err := buf.Read(msg)
 
-		if err != nil || nn != len(msg) {
+		if err != nil && nn != len(msg) {
 			break
 		}
 
@@ -128,8 +130,11 @@ func ExtractMessages(data []byte, ret proto.Message, cb func()) int {
 		n += nn + len(num)
 
 		cb()
-
 		ret.Reset()
+
+		if err != nil || n == len(data) {
+			break
+		}
 	}
 
 	return n
