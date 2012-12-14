@@ -1,9 +1,11 @@
 package discovery
 
 import proto "code.google.com/p/goprotobuf/proto"
-import "math"
+import json "encoding/json"
+import math "math"
 
-var _ = proto.GetString
+var _ = proto.Marshal
+var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Discovery_Type int32
@@ -22,10 +24,6 @@ var Discovery_Type_value = map[string]int32{
 	"TypeWakeup":	1,
 }
 
-func NewDiscovery_Type(x Discovery_Type) *Discovery_Type {
-	e := Discovery_Type(x)
-	return &e
-}
 func (x Discovery_Type) Enum() *Discovery_Type {
 	p := new(Discovery_Type)
 	*p = x
@@ -33,6 +31,17 @@ func (x Discovery_Type) Enum() *Discovery_Type {
 }
 func (x Discovery_Type) String() string {
 	return proto.EnumName(Discovery_Type_name, int32(x))
+}
+func (x Discovery_Type) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *Discovery_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Discovery_Type_value, data, "Discovery_Type")
+	if err != nil {
+		return err
+	}
+	*x = Discovery_Type(value)
+	return nil
 }
 
 type Greeting struct {

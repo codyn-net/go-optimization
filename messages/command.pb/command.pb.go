@@ -1,10 +1,12 @@
 package command
 
 import proto "code.google.com/p/goprotobuf/proto"
-import "math"
+import json "encoding/json"
+import math "math"
 import "ponyo.epfl.ch/go/get/optimization/go/optimization/messages/task.pb"
 
-var _ = proto.GetString
+var _ = proto.Marshal
+var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type CommandType int32
@@ -41,10 +43,6 @@ var CommandType_value = map[string]int32{
 	"NumCommands":	7,
 }
 
-func NewCommandType(x CommandType) *CommandType {
-	e := CommandType(x)
-	return &e
-}
 func (x CommandType) Enum() *CommandType {
 	p := new(CommandType)
 	*p = x
@@ -52,6 +50,17 @@ func (x CommandType) Enum() *CommandType {
 }
 func (x CommandType) String() string {
 	return proto.EnumName(CommandType_name, int32(x))
+}
+func (x CommandType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *CommandType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(CommandType_value, data, "CommandType")
+	if err != nil {
+		return err
+	}
+	*x = CommandType(value)
+	return nil
 }
 
 type KillCommand struct {

@@ -1,9 +1,11 @@
 package task
 
 import proto "code.google.com/p/goprotobuf/proto"
-import "math"
+import json "encoding/json"
+import math "math"
 
-var _ = proto.GetString
+var _ = proto.Marshal
+var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Identify_Fitness_Type int32
@@ -22,10 +24,6 @@ var Identify_Fitness_Type_value = map[string]int32{
 	"Minimize":	1,
 }
 
-func NewIdentify_Fitness_Type(x Identify_Fitness_Type) *Identify_Fitness_Type {
-	e := Identify_Fitness_Type(x)
-	return &e
-}
 func (x Identify_Fitness_Type) Enum() *Identify_Fitness_Type {
 	p := new(Identify_Fitness_Type)
 	*p = x
@@ -33,6 +31,17 @@ func (x Identify_Fitness_Type) Enum() *Identify_Fitness_Type {
 }
 func (x Identify_Fitness_Type) String() string {
 	return proto.EnumName(Identify_Fitness_Type_name, int32(x))
+}
+func (x Identify_Fitness_Type) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *Identify_Fitness_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Identify_Fitness_Type_value, data, "Identify_Fitness_Type")
+	if err != nil {
+		return err
+	}
+	*x = Identify_Fitness_Type(value)
+	return nil
 }
 
 type Response_Status int32
@@ -54,10 +63,6 @@ var Response_Status_value = map[string]int32{
 	"Challenge":	2,
 }
 
-func NewResponse_Status(x Response_Status) *Response_Status {
-	e := Response_Status(x)
-	return &e
-}
 func (x Response_Status) Enum() *Response_Status {
 	p := new(Response_Status)
 	*p = x
@@ -65,6 +70,17 @@ func (x Response_Status) Enum() *Response_Status {
 }
 func (x Response_Status) String() string {
 	return proto.EnumName(Response_Status_name, int32(x))
+}
+func (x Response_Status) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *Response_Status) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Response_Status_value, data, "Response_Status")
+	if err != nil {
+		return err
+	}
+	*x = Response_Status(value)
+	return nil
 }
 
 type Response_Failure_Type int32
@@ -98,10 +114,6 @@ var Response_Failure_Type_value = map[string]int32{
 	"Disconnected":		6,
 }
 
-func NewResponse_Failure_Type(x Response_Failure_Type) *Response_Failure_Type {
-	e := Response_Failure_Type(x)
-	return &e
-}
 func (x Response_Failure_Type) Enum() *Response_Failure_Type {
 	p := new(Response_Failure_Type)
 	*p = x
@@ -109,6 +121,17 @@ func (x Response_Failure_Type) Enum() *Response_Failure_Type {
 }
 func (x Response_Failure_Type) String() string {
 	return proto.EnumName(Response_Failure_Type_name, int32(x))
+}
+func (x Response_Failure_Type) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *Response_Failure_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Response_Failure_Type_value, data, "Response_Failure_Type")
+	if err != nil {
+		return err
+	}
+	*x = Response_Failure_Type(value)
+	return nil
 }
 
 type Notification_Type int32
@@ -130,10 +153,6 @@ var Notification_Type_value = map[string]int32{
 	"Warning":	2,
 }
 
-func NewNotification_Type(x Notification_Type) *Notification_Type {
-	e := Notification_Type(x)
-	return &e
-}
 func (x Notification_Type) Enum() *Notification_Type {
 	p := new(Notification_Type)
 	*p = x
@@ -141,6 +160,17 @@ func (x Notification_Type) Enum() *Notification_Type {
 }
 func (x Notification_Type) String() string {
 	return proto.EnumName(Notification_Type_name, int32(x))
+}
+func (x Notification_Type) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *Notification_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Notification_Type_value, data, "Notification_Type")
+	if err != nil {
+		return err
+	}
+	*x = Notification_Type(value)
+	return nil
 }
 
 type Communication_Type int32
@@ -180,10 +210,6 @@ var Communication_Type_value = map[string]int32{
 	"CommunicationNotification":	8,
 }
 
-func NewCommunication_Type(x Communication_Type) *Communication_Type {
-	e := Communication_Type(x)
-	return &e
-}
 func (x Communication_Type) Enum() *Communication_Type {
 	p := new(Communication_Type)
 	*p = x
@@ -191,6 +217,17 @@ func (x Communication_Type) Enum() *Communication_Type {
 }
 func (x Communication_Type) String() string {
 	return proto.EnumName(Communication_Type_name, int32(x))
+}
+func (x Communication_Type) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *Communication_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Communication_Type_value, data, "Communication_Type")
+	if err != nil {
+		return err
+	}
+	*x = Communication_Type(value)
+	return nil
 }
 
 type Token struct {

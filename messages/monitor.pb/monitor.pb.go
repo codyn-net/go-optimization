@@ -1,9 +1,11 @@
 package monitor
 
 import proto "code.google.com/p/goprotobuf/proto"
-import "math"
+import json "encoding/json"
+import math "math"
 
-var _ = proto.GetString
+var _ = proto.Marshal
+var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type MessageType int32
@@ -25,10 +27,6 @@ var MessageType_value = map[string]int32{
 	"Measurement":	2,
 }
 
-func NewMessageType(x MessageType) *MessageType {
-	e := MessageType(x)
-	return &e
-}
 func (x MessageType) Enum() *MessageType {
 	p := new(MessageType)
 	*p = x
@@ -36,6 +34,17 @@ func (x MessageType) Enum() *MessageType {
 }
 func (x MessageType) String() string {
 	return proto.EnumName(MessageType_name, int32(x))
+}
+func (x MessageType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(x.String())
+}
+func (x *MessageType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(MessageType_value, data, "MessageType")
+	if err != nil {
+		return err
+	}
+	*x = MessageType(value)
+	return nil
 }
 
 type RegisterMessage struct {
