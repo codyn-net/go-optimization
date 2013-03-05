@@ -24,7 +24,7 @@ func (e EventQueue) Loop() {
 
 func (e EventQueue) Timeout(ms time.Duration, f Event) {
 	go func() {
-		time.Sleep(ms * time.Millisecond)
+		time.Sleep(ms)
 		e <- f
 	}()
 }
