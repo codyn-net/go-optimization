@@ -186,7 +186,7 @@ func ReadCommunication(reader io.Reader, ret proto.Message, cb func(interface{},
 		}
 
 		if cc == nil {
-			return cb(nil, nil)
+			return cb(nil, fmt.Errorf("No message received"))
 		}
 
 		c := cc.(*task.Communication)
@@ -230,6 +230,10 @@ func ReadCommunication(reader io.Reader, ret proto.Message, cb func(interface{},
 
 		if tp != c.GetType() {
 			return cb(nil, fmt.Errorf("Communication type %v is not the desired type %v", c.GetType(), tp))
+		}
+		
+		if msg == nil {
+			return cb(nil, fmt.Errorf("Invalid message received"))
 		}
 
 		return cb(msg, nil)
