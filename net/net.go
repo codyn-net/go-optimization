@@ -97,13 +97,7 @@ func (a *Address) Resolve() error {
 			name = a.Host
 		}
 
-		nm, err := net.LookupCNAME(name)
-
-		if err != nil {
-			nm = name
-		}
-
-		addrs, err := net.LookupHost(nm)
+		addrs, err := net.LookupHost(name)
 
 		if err != nil {
 			return err
