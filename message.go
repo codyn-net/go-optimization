@@ -167,10 +167,6 @@ func ReadMessages(reader io.Reader, ret proto.Message, cb func(interface{}, erro
 		}
 
 		if err != nil {
-			if err == io.EOF {
-				err = nil
-			}
-
 			cb(nil, err)
 			break
 		}
