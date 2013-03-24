@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"path"
 	"time"
-	"./log"
+	"ponyo.epfl.ch/go/get/optimization/go/optimization/log"
 )
 
 type DispatcherRepo struct {
