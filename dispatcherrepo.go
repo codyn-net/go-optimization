@@ -24,10 +24,6 @@ var DispatcherRepository = DispatcherRepo {
 	cache:        make(map[string]string),
 }
 
-func init() {
-	DispatcherRepository.scan()
-}
-
 func (x *DispatcherRepo) scanDir(p string) {
 	log.W("Scanning for dispatchers in: %s", p)
 
