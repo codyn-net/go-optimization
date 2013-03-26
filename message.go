@@ -140,7 +140,7 @@ func ExtractMessages(data []byte, ret proto.Message, cb func()) int {
 	return n
 }
 
-func ReadMessages(reader io.Reader, ret proto.Message, cb func(interface{}, error) bool) {
+func ReadMessages(reader io.Reader, ret proto.Message, cb func(interface{}, error) bool) error {
 	buf := new(bytes.Buffer)
 	data := make([]byte, 512)
 
@@ -168,19 +168,21 @@ func ReadMessages(reader io.Reader, ret proto.Message, cb func(interface{}, erro
 
 		if err != nil {
 			cb(nil, err)
-			break
+			return err
 		}
 
 		if !cont {
 			break
 		}
 	}
+
+	return nil
 }
 
-func ReadCommunication(reader io.Reader, ret proto.Message, cb func(interface{}, error) bool) {
+func ReadCommunication(reader io.Reader, ret proto.Message, cb func(interface{}, error) bool) error {
 	comm := new(task.Communication)
 
-	ReadMessages(reader, comm, func(cc interface{}, err error) bool {
+	return ReadMessages(reader, comm, func(cc interface{}, err error) bool {
 		if err != nil {
 			return cb(nil, err)
 		}
