@@ -23,6 +23,9 @@ type Dispatcher struct {
 	Task *task.Task
 	Response *task.Response
 
+	Parameters map[string]float64
+	Settings map[string]string
+
 	Shutdown chan bool
 }
 
@@ -55,6 +58,9 @@ func NewDispatcher(reader io.ReadCloser, writer io.WriteCloser) *Dispatcher {
 	return &Dispatcher {
 		reader: reader,
 		writer: writer,
+
+		Settings: make(map[string]string),
+		Parameters: make(map[string]float64),
 	}
 }
 
@@ -104,6 +110,26 @@ func (x *Dispatcher) AddData(name string, value string) {
 	})
 }
 
+func (x *Dispatcher) extract() {
+	if x.Task == nil {
+		return
+	}
+
+	for _, s := range x.Task.Settings {
+		name := s.GetKey()
+		value := s.GetValue()
+
+		x.Settings[name] = value
+	}
+
+	for _, p := range x.Task.Parameters {
+		name := p.GetName()
+		value := p.GetValue()
+
+		x.Parameters[name] = value
+	}
+}
+
 func (x *Dispatcher) ReadTask() error {
 	if x.Task != nil {
 		return nil
@@ -123,6 +149,8 @@ func (x *Dispatcher) ReadTask() error {
 
 		x.Response.Id = x.Task.Id
 		x.Response.Uniqueid = x.Task.Uniqueid
+
+		x.extract()
 
 		return false
 	})
