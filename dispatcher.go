@@ -156,6 +156,14 @@ func (x *Dispatcher) ReadTask() error {
 	})
 }
 
+func (x *Dispatcher) SetResponse(r *task.Response) {
+	x.Response.Status = r.Status
+
+	x.Response.Fitness = r.Fitness
+	x.Response.Data = r.Data
+	x.Response.Failure = r.Failure
+}
+
 func (x *Dispatcher) WriteResponse() error {
 	b, err := EncodeCommunication(x.Response)
 
