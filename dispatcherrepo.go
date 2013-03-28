@@ -15,6 +15,8 @@ type DispatcherRepo struct {
 	cache        map[string]string
 	lastScan     time.Time
 	scanThrottle uint
+
+	DispatcherPath string
 }
 
 var DispatcherRepository = DispatcherRepo {
@@ -22,6 +24,8 @@ var DispatcherRepository = DispatcherRepo {
 	scanThrottle: 10,
 	scanned:      make(map[string]time.Time),
 	cache:        make(map[string]string),
+
+	DispatcherPath: "optimization-dispatchers-3.0",
 }
 
 func (x *DispatcherRepo) scanDir(p string) {
