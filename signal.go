@@ -2,7 +2,7 @@ package optimization
 
 import (
 	"fmt"
-	"ponyo.epfl.ch/go/get/optimization/go/optimization/log"
+	"ponyo.epfl.ch/go/get/optimization-go/optimization/log"
 	"reflect"
 	"runtime"
 )

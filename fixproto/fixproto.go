@@ -54,7 +54,7 @@ func main() {
 				imp.Name = nil
 
 				// Change the path
-				imp.Path.Value = `"ponyo.epfl.ch/go/get/optimization/go/optimization/messages/` + path.Base(imp.Path.Value)
+				imp.Path.Value = `"ponyo.epfl.ch/go/get/optimization-go/optimization/messages/` + path.Base(imp.Path.Value)
 			}
 		}
 

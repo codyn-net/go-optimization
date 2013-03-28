@@ -3,7 +3,7 @@ package command
 import proto "code.google.com/p/goprotobuf/proto"
 import json "encoding/json"
 import math "math"
-import "ponyo.epfl.ch/go/get/optimization/go/optimization/messages/task.pb"
+import "ponyo.epfl.ch/go/get/optimization-go/optimization/messages/task.pb"
 
 var _ = proto.Marshal
 var _ = &json.SyntaxError{}

@@ -1,7 +1,7 @@
 package optimization
 
 import (
-	"ponyo.epfl.ch/go/get/optimization/go/optimization/messages/task.pb"
+	"ponyo.epfl.ch/go/get/optimization-go/optimization/messages/task.pb"
 	"os"
 	"os/signal"
 	"syscall"

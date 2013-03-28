@@ -3,8 +3,8 @@ package optimization
 import (
 	"fmt"
 	"net"
-	"ponyo.epfl.ch/go/get/optimization/go/optimization/messages/discovery.pb"
-	"ponyo.epfl.ch/go/get/optimization/go/optimization/log"
+	"ponyo.epfl.ch/go/get/optimization-go/optimization/messages/discovery.pb"
+	"ponyo.epfl.ch/go/get/optimization-go/optimization/log"
 )
 
 var _ = fmt.Println
